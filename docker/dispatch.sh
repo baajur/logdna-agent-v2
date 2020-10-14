@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -x
+
 _term() {
   docker kill $child
 }
@@ -38,15 +40,13 @@ function get_sccache_args()
 			fi
 		fi
 		mkdir -p $sccache_dir
-		echo "-v $sccache_dir:/var/cache/sccache:Z -e SCCACHE_DIR=/var/cache/sccache"
+		echo "-v $sccache_dir:/var/cache/sccache:Z --env SCCACHE_DIR=/var/cache/sccache"
 	else
-		echo "-e SCCACHE_BUCKET=$SCCACHE_BUCKET"
+		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION --env SCCACHE_ERROR_LOG=/sccache.log --env SCCACHE_LOG=sccache=trace"
 	fi
 }
 
 extra_args="$volume_mounts $(get_sccache_args)"
-
-extra_args="$extra_args -e SCCACHE_ERROR_LOG=/dev/stdout -e RUST_LOG=debug"
 
 trap _term SIGTERM
 trap _term SIGINT
