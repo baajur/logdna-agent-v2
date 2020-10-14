@@ -64,10 +64,10 @@ fi
 
 sleep 20
 
-#while docker exec --env SCCACHE_START_SERVER=0 --env SCCACHE_LOG=trace --env RUST_LOG=sccache=trace --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER --env SERVER_STARTUP_TIMEOUT_MS=100000 "$child" sccache --show-stats
-#do
-#    sleep 1
-#done
+while docker exec --env SCCACHE_START_SERVER=0 --env SCCACHE_LOG=trace --env RUST_LOG=sccache=trace --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER --env SERVER_STARTUP_TIMEOUT_MS=100000 "$child" sccache --show-stats
+do
+    sleep 1
+done
 
 # Tail the container til it's done
 docker logs -f "$child"
