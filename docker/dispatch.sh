@@ -62,7 +62,7 @@ fi
 
 sleep 20
 
-while docker exec "$child" sccache --show-stats
+while docker exec --env SCCACHE_ERROR_LOG=/sccache.log --env SCCACHE_LOG=sccache=trace --env RUST_LOG=sccache=trace --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER --env SERVER_STARTUP_TIMEOUT_MS=100000 "$child" sccache --show-stats
 do
     sleep 1
 done
