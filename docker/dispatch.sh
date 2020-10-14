@@ -60,7 +60,7 @@ elif [ "$HOST_MACHINE" = "Linux" ]; then
 	child=$(docker run -d -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5)
 fi
 
-sleep 5
+sleep 20
 
 while docker exec "$child" sccache --show-stats
 do
