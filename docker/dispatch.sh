@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-set -x
-
 _term() {
   docker kill $child
   status=$(docker inspect $child --format='{{.State.ExitCode}}')
@@ -45,7 +43,8 @@ function get_sccache_args()
 		mkdir -p $sccache_dir
 		echo "-v $sccache_dir:/var/cache/sccache:Z --env SCCACHE_DIR=/var/cache/sccache"
 	else
-		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION --env SCCACHE_LOG=trace --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER"
+		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION"
+    #--env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
 	fi
 }
 
@@ -55,27 +54,18 @@ trap _term SIGTERM
 trap _term SIGINT
 
 if [ "$HOST_MACHINE" = "Mac" ]; then
-	docker pull $3
 	child=$(docker run -d -w "$1" $extra_args -v "$2" $4 "$3" $5)
 elif [ "$HOST_MACHINE" = "Linux" ]; then
-	docker pull $3
 	child=$(docker run -d -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5)
 fi
-
-sleep 20
-
-while docker exec --env SCCACHE_START_SERVER=0 --env SCCACHE_LOG=trace --env RUST_LOG=sccache=trace --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER --env SERVER_STARTUP_TIMEOUT_MS=100000 "$child" sccache --show-stats
-do
-    sleep 1
-done
 
 # Tail the container til it's done
 docker logs -f "$child"
 
-#docker cp $child:/sccache.log .
-#cat sccache.log
-
+# Get the exit code of completed container
 status=$(docker inspect $child --format='{{.State.ExitCode}}')
+
+# Clean up the container
 docker rm $child
 
 exit $status

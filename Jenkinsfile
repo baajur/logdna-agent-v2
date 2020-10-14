@@ -18,6 +18,11 @@ pipeline {
         SCCACHE_REGION = 'us-west-2'
     }
     stages {
+        stage('Pull Build Image') {
+            steps {
+                sh "docker pull ${RUST_IMAGE_REPO}:${RUST_IMAGE_TAG}"
+            }
+        }
         stage('Build and Test') {
             stages {
                 stage ("Lint and Test"){
