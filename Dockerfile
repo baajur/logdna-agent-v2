@@ -5,6 +5,9 @@ FROM ${BUILD_IMAGE} as build
 ENV _RJEM_MALLOC_CONF="narenas:1,tcache:false,dirty_decay_ms:0,muzzy_decay_ms:0"
 ENV JEMALLOC_SYS_WITH_MALLOC_CONF="narenas:1,tcache:false,dirty_decay_ms:0,muzzy_decay_ms:0"
 
+ARG SCCACHE_BUCKET
+ENV SCCACHE_BUCKET=${SCCACHE_BUCKET}
+
 # Create the directory for agent repo
 WORKDIR /opt/logdna-agent-v2
 

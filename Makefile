@@ -18,6 +18,7 @@ DOCKER_PRIVATE_IMAGE := us.gcr.io/logdna-k8s/logdna-agent-v2
 DOCKER_PUBLIC_IMAGE := docker.io/logdna/logdna-agent
 DOCKER_IBM_IMAGE := icr.io/ext/logdna-agent
 
+export CARGO_CACHE ?= $(shell pwd)/.cargo_cache
 RUST_COMMAND := $(DOCKER_DISPATCH) $(RUST_IMAGE)
 HADOLINT_COMMAND := $(DOCKER_DISPATCH) $(HADOLINT_IMAGE)
 
@@ -73,6 +74,7 @@ integration-test: ## Run integration tests
 .PHONY:clean
 clean: ## Clean all artifacts from the build process
 	$(RUST_COMMAND) "--env RUST_BACKTRACE=full" "cargo clean"
+	rm -fr $(CARGO_CACHE)/*
 
 .PHONY:clean-docker
 clean-docker: ## Cleans the intermediate and final agent images left over from the build-image target
@@ -178,7 +180,8 @@ build-image: ## Build a docker image as specified in the Dockerfile
 		--build-arg BUILD_VERSION=$(BUILD_VERSION) \
 		--build-arg REPO=$(REPO) \
 		--build-arg VCS_REF=$(VCS_REF) \
-		--build-arg VCS_URL=$(VCS_URL)
+		--build-arg VCS_URL=$(VCS_URL) \
+		--build-arg SCCACHE_BUCKET=$(SCCACHE_BUCKET)
 
 .PHONY:publish-image
 publish-image: ## Publish SemVer compliant releases to our registroies
