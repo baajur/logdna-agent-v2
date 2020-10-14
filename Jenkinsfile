@@ -16,8 +16,7 @@ pipeline {
     }
     stages {
         stage('Build and Test') {
-            failFast true
-            parallel {
+            stages {
                 stage ("Lint and Test"){
                     environment {
                         CREDS_FILE = credentials('pipeline-e2e-creds')
@@ -43,12 +42,6 @@ pipeline {
                         }
                     }
                 }
-                stage('Build Release Image') {
-                    steps {
-                        sh "make build-image"
-                    }
-                }
-
             }
         }
         stage('Check Publish Images') {
@@ -56,6 +49,11 @@ pipeline {
                 branch pattern: "\\d\\.\\d", comparator: "REGEXP"
             }
             stages {
+                stage('Build Release Image') {
+                    steps {
+                        sh "make build-image"
+                    }
+                }
                 stage('Publish Images') {
                     input {
                         message "Should we publish the versioned image?"
