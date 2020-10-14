@@ -4,7 +4,9 @@ set -x
 
 _term() {
   docker kill $child
+  status=$(docker inspect $child --format='{{.State.ExitCode}}')
   docker rm $child
+  exit $status
 }
 
 trap _term SIGTERM
@@ -66,4 +68,7 @@ do
 done
 
 docker logs -f "$child"
+status=$(docker inspect $child --format='{{.State.ExitCode}}')
 docker rm $child
+
+exit $status
