@@ -4,6 +4,7 @@ set -x
 
 _term() {
   docker kill $child
+  docker rm $child
 }
 
 trap _term SIGTERM
@@ -52,8 +53,15 @@ trap _term SIGTERM
 trap _term SIGINT
 
 if [ "$HOST_MACHINE" = "Mac" ]; then
-	child=$(docker run -d --rm -w "$1" $extra_args -v "$2" $4 "$3" $5)
+	child=$(docker run -d -w "$1" $extra_args -v "$2" $4 "$3" $5)
 elif [ "$HOST_MACHINE" = "Linux" ]; then
-	child=$(docker run -d --rm -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5)
+	child=$(docker run -d -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5)
 fi
+
+while docker exec "$child" sccache --show-stats
+do
+    sleep 1
+done
+
 docker logs -f "$child"
+docker rm $child
