@@ -1,5 +1,12 @@
 #!/usr/bin/env sh
 
+_term() {
+  docker kill $child
+}
+
+trap _term SIGTERM
+trap _term SIGINT
+
 case "$(uname)" in
 	Darwin*)	HOST_MACHINE=Mac;;
 	*)		HOST_MACHINE=Linux;;
@@ -39,8 +46,12 @@ function get_sccache_args()
 
 extra_args="$volume_mounts $(get_sccache_args)"
 
+trap _term SIGTERM
+trap _term SIGINT
+
 if [ "$HOST_MACHINE" = "Mac" ]; then
-	docker run -it --rm -w "$1" $extra_args -v "$2" $4 "$3" $5
+	child=$(docker run -d --rm -w "$1" $extra_args -v "$2" $4 "$3" $5)
 elif [ "$HOST_MACHINE" = "Linux" ]; then
-	docker run -it --rm -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5
+	child=$(docker run -d --rm -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5)
 fi
+docker logs -f "$child"

@@ -16,6 +16,7 @@ pipeline {
     }
     stages {
         stage('Build and Test') {
+            failFast true
             parallel {
                 stage ("Lint and Test"){
                     environment {
