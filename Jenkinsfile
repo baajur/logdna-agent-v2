@@ -11,8 +11,8 @@ pipeline {
         cron(env.BRANCH_NAME ==~ /\d\.\d/ ? 'H H 1,15 * *' : '')
     }
     environment {
-        RUST_IMAGE_REPO = 'us.gcr.io/logdna-k8s/rust'
-        RUST_IMAGE_TAG = '1.42'
+        // RUST_IMAGE_REPO = 'us.gcr.io/logdna-k8s/rust'
+        // RUST_IMAGE_TAG = '1.42'
         SCCACHE_BUCKET = 'logdna-sccache-us-west-2'
         SCCACHE_REGION = 'us-west-2'
     }

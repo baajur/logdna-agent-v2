@@ -43,7 +43,7 @@ function get_sccache_args()
 		mkdir -p $sccache_dir
 		echo "-v $sccache_dir:/var/cache/sccache:Z --env SCCACHE_DIR=/var/cache/sccache"
 	else
-		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION --env SCCACHE_ERROR_LOG=/sccache.log --env SCCACHE_LOG=sccache=trace"
+		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION --env SCCACHE_ERROR_LOG=/sccache.log --env SCCACHE_LOG=sccache=trace --env RUST_LOG=sccache=trace"
 	fi
 }
 
@@ -57,6 +57,8 @@ if [ "$HOST_MACHINE" = "Mac" ]; then
 elif [ "$HOST_MACHINE" = "Linux" ]; then
 	child=$(docker run -d -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5)
 fi
+
+sleep 30
 
 while docker exec "$child" sccache --show-stats
 do
