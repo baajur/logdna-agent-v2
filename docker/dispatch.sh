@@ -43,7 +43,7 @@ function get_sccache_args()
 		mkdir -p $sccache_dir
 		echo "-v $sccache_dir:/var/cache/sccache:Z --env SCCACHE_DIR=/var/cache/sccache"
 	else
-		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION --env SCCACHE_ERROR_LOG=/sccache.log --env SCCACHE_LOG=sccache=trace --env RUST_LOG=sccache=trace"
+		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION --env SCCACHE_ERROR_LOG=/sccache.log --env SCCACHE_LOG=sccache=trace --env RUST_LOG=sccache=trace --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
 	fi
 }
 

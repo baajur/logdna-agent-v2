@@ -32,11 +32,18 @@ pipeline {
                             // current structure
                             LOGDNA_INGESTION_KEY = creds["packet-stage"]["account"]["ingestionkey"]
                         }
-                        sh """
-                            make lint
-                            make test
-                            make integration-test LOGDNA_INGESTION_KEY=${LOGDNA_INGESTION_KEY}
-                        """
+                        withCredentials([[
+                            $class: 'AmazonWebServicesCredentialsBinding',
+                            credentialsId: 'aws',
+                            accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                        ]]){
+                            sh """
+                                make lint
+                                make test
+                                make integration-test LOGDNA_INGESTION_KEY=${LOGDNA_INGESTION_KEY}
+                            """
+                        }
                     }
                     post {
                         success {
@@ -65,7 +72,14 @@ pipeline {
                         script {
                             withRegistry('https://docker.io', 'dockerhub-username-password') {
                                 withRegistry('https://icr.io', 'icr-username-password') {
-                                    sh 'make publish'
+                                    withCredentials([[
+                                        $class: 'AmazonWebServicesCredentialsBinding',
+                                        credentialsId: 'aws',
+                                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                                    ]]){
+                                        sh 'make publish'
+                                    }
                                 }
                             }
                         }
