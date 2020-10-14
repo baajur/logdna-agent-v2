@@ -55,8 +55,10 @@ trap _term SIGTERM
 trap _term SIGINT
 
 if [ "$HOST_MACHINE" = "Mac" ]; then
+	docker pull $3
 	child=$(docker run -d -w "$1" $extra_args -v "$2" $4 "$3" $5)
 elif [ "$HOST_MACHINE" = "Linux" ]; then
+	docker pull $3
 	child=$(docker run -d -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5)
 fi
 
