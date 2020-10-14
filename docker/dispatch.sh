@@ -45,7 +45,7 @@ function get_sccache_args()
 		mkdir -p $sccache_dir
 		echo "-v $sccache_dir:/var/cache/sccache:Z --env SCCACHE_DIR=/var/cache/sccache"
 	else
-		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION --env SCCACHE_ERROR_LOG=/sccache.log --env SCCACHE_LOG=sccache=trace --env RUST_LOG=sccache=trace --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER --env SERVER_STARTUP_TIMEOUT_MS=100000"
+		echo "--env SCCACHE_BUCKET=$SCCACHE_BUCKET --env SCCACHE_REGION=$SCCACHE_REGION --env SCCACHE_LOG=trace --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER"
 	fi
 }
 
@@ -64,16 +64,16 @@ fi
 
 sleep 20
 
-while docker exec --env SCCACHE_ERROR_LOG=/sccache.log --env SCCACHE_LOG=sccache=trace --env RUST_LOG=sccache=trace --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER --env SERVER_STARTUP_TIMEOUT_MS=100000 "$child" sccache --show-stats
-do
-    sleep 1
-done
+#while docker exec --env SCCACHE_START_SERVER=0 --env SCCACHE_LOG=trace --env RUST_LOG=sccache=trace --env SCCACHE_SERVER_PORT=423$EXECUTOR_NUMBER --env SERVER_STARTUP_TIMEOUT_MS=100000 "$child" sccache --show-stats
+#do
+#    sleep 1
+#done
 
 # Tail the container til it's done
 docker logs -f "$child"
 
-docker cp $child:/sccache.log .
-cat sccache.log
+#docker cp $child:/sccache.log .
+#cat sccache.log
 
 status=$(docker inspect $child --format='{{.State.ExitCode}}')
 docker rm $child

@@ -66,6 +66,7 @@ build-release: ## Build a release version of the agent
 .PHONY:test
 test: ## Run unit tests
 	$(RUST_COMMAND) "--env RUST_BACKTRACE=full" "aws s3 ls --region us-west-2 logdna-sccache-us-west-2"
+	$(RUST_COMMAND) "--env RUST_BACKTRACE=full --env SCCACHE_LOG=debug --env SCCACHE_START_SERVER=1 --env SCCACHE_NO_DAEMON=1" "sccache"
 	$(RUST_COMMAND) "--env RUST_BACKTRACE=full" "cargo test"
 
 .PHONY:integration-test
