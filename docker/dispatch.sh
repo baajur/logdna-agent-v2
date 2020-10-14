@@ -60,14 +60,19 @@ elif [ "$HOST_MACHINE" = "Linux" ]; then
 	child=$(docker run -d -u $(id -u):$(id -g) -w "$1" $extra_args -v "$2" $4 "$3" $5)
 fi
 
-sleep 30
+sleep 5
 
 while docker exec "$child" sccache --show-stats
 do
     sleep 1
 done
 
+# Tail the container til it's done
 docker logs -f "$child"
+
+docker cp $child:/sccache.log .
+cat sccache.log
+
 status=$(docker inspect $child --format='{{.State.ExitCode}}')
 docker rm $child
 
