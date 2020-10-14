@@ -46,6 +46,8 @@ function get_sccache_args()
 
 extra_args="$volume_mounts $(get_sccache_args)"
 
+extra_args="$extra_args -e SCCACHE_ERROR_LOG=/dev/stdout -e RUST_LOG=debug"
+
 trap _term SIGTERM
 trap _term SIGINT
 
