@@ -13,6 +13,7 @@ pipeline {
     environment {
         RUST_IMAGE_REPO = 'us.gcr.io/logdna-k8s/rust'
         RUST_IMAGE_TAG = '1.42'
+        SCCACHE_BUCKET = 'logdna-sccache-us-west-2'
     }
     stages {
         stage('Build and Test') {
