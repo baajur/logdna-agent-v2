@@ -59,16 +59,16 @@ pipeline {
                 }
             }
         }
+        stage('Build Release Image') {
+            steps {
+                sh "make build-image"
+            }
+        }
         stage('Check Publish Images') {
             when {
                 branch pattern: "\\d\\.\\d", comparator: "REGEXP"
             }
             stages {
-                stage('Build Release Image') {
-                    steps {
-                        sh "make build-image"
-                    }
-                }
                 stage('Publish Images') {
                     input {
                         message "Should we publish the versioned image?"
