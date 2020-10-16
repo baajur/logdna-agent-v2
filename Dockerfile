@@ -8,6 +8,9 @@ ENV JEMALLOC_SYS_WITH_MALLOC_CONF="narenas:1,tcache:false,dirty_decay_ms:0,muzzy
 ARG SCCACHE_BUCKET
 ENV SCCACHE_BUCKET=${SCCACHE_BUCKET}
 
+ARG SCCACHE_REGION
+ENV SCCACHE_REGION=${SCCACHE_REGION}
+
 # Create the directory for agent repo
 WORKDIR /opt/logdna-agent-v2
 
